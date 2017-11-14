@@ -1,0 +1,25 @@
+var assembly = typeof(Leer).GetTypeInfo().Assembly;
+
+Stream stream = assembly.GetManifestResourceStream(ruta);
+
+StreamReader objReader = new StreamReader(stream);
+
+var doc = XDocument.Load(stream);
+
+// Forma 1 de crear la lista
+List<Contacto> contactos1 = new List<Contacto>();
+foreach (XElement element in doc.Root.Elements())
+{
+    contactos1.Add(new Contacto(element.Element("NOMBRE").Value, element.Element("EDAD").Value, element.Element("DNI").Value));
+}
+
+// Forma 2 de crear la lista
+List<Contacto> contactos2 = new List<Contacto>();
+contactos2 = (from s in doc.Root.Elements()
+             select new Contacto
+             {
+                 Nombre = ((XElement)s).Element("NOMBRE").Value,
+                 Edad = ((XElement)s).Element("EDAD").Value,
+                 Dni = ((XElement)s).Element("DNI").Value
+             }).ToList();
+
